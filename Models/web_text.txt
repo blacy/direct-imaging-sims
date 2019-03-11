@@ -1,0 +1,17 @@
+Planet reflected light curves are the product of the stellar flux, the 
+wavelength-dependent geometric albedo, the wavelength- and 
+time-dependent orbital phase curve, and the square of the ratio of planet 
+radius to planet-star separation.
+
+Here we provide a sample of the two geometric albedo models introduced 
+in the paper, "Characterization of Giant Exoplanet Atmospheres with
+the Optical Coronagraph on WFIRST", which is available on astro-ph at: 
+http://arxiv.org/abs/1801.08964 . These two models are inspired by the
+giant planets in our own Solar System, and intentionally kept very 
+simple due to the modest signal-to-noise ratios and wavelength coverage
+expected with WFIRST-CGI.
+
+A GUI which generates planet-star flux ratio light curves using the
+formalism introduced in Madhusudhan & Burrows 2012, "Analytic Models for 
+Albedos, Phase Curves, and Polarization of Reflected Light from Exoplanets",
+is also provided. 
