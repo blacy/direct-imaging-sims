@@ -42,6 +42,41 @@ def create_header_string(TEXP, params):
     return header
 
 
+def imaging_delta_mag(bandcenter, width, params):
+    # input: 
+    # bandcenter - wl of center of band in microns
+    # width - full width of band as a percentage of the central wavelength
+    # params - dictionary of planet-star system characteristics
+    # output: 
+    # deltamag - the difference in magnitude between the planet
+    #            and the star in the specified band
+    start = bandcenter*(1.0 - width/200.0)
+    end = bandcenter*(1.0 + width/200.0)
+    R = params['R']
+    wavelengths = mu.create_wl_range(start,end,R)
+    planet_phot = snr.planet_star_fluxratio(wavelengths,params)*stellar_photon_flux(wavelength, params)
+    stellar_phot = stellar_photon_flux(wavelength, params)
+    fratio = np.sum(planet_phot)/np.sum(stellar_phot)
+    deltamag = -2.5*np.log10(fratio)
+    return deltamag
+
+def ifs_delta_mag(bandcenter, width, params):
+    # input: 
+    # bandcenter - wl of center of band in microns
+    # width - full width of band as a percentage of the central wavelength
+    # params - dictionary of planet-star system characteristics
+    # output: 
+    # deltamag - and array of the difference in magnitude between 
+    #            the planet and the star in the specified IFS band 
+    #            with the resolution provided in params
+    start = bandcenter*(1.0 - width/200.0)
+    end = bandcenter*(1.0 + width/200.0)
+    R = params['R']
+    wavelengths = mu.create_wl_range(start,end,R)
+    fratio = snr.planet_star_fluxratio(wavelengths,params)
+    deltamag = -2.5*np.log10(fratio)
+    return deltamag
+    
 if __name__ == '__main__':
 
     # Example of setting up a star+planet system 
