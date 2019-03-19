@@ -41,7 +41,6 @@ def create_header_string(TEXP, params):
     header = header + ' 1 : wavelength (microns)\n 2 : clean planet-star flux ratio\n 3 : noisy planet-star flux ratio\n 4 : error'
     return header
 
-
 def imaging_delta_mag(bandcenter, width, params):
     # input: 
     # bandcenter - wl of center of band in microns
@@ -54,8 +53,8 @@ def imaging_delta_mag(bandcenter, width, params):
     end = bandcenter*(1.0 + width/200.0)
     R = params['R']
     wavelengths = mu.create_wl_range(start,end,R)
-    planet_phot = snr.planet_star_fluxratio(wavelengths,params)*stellar_photon_flux(wavelength, params)
-    stellar_phot = stellar_photon_flux(wavelength, params)
+    planet_phot = snr.planet_star_fluxratio(wavelengths,params)*snr.stellar_photon_flux(wavelengths, params)
+    stellar_phot = snr.stellar_photon_flux(wavelengths, params)
     fratio = np.sum(planet_phot)/np.sum(stellar_phot)
     deltamag = -2.5*np.log10(fratio)
     return deltamag
