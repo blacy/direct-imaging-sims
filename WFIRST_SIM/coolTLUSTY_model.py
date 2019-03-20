@@ -87,3 +87,42 @@ def lnprob(p, wavelength, fluxratio, errors, ast_dict):
     lnprob = lp + lnlike(p, wavelength, fluxratio, errors, ast_dict)
 
     return lnprob
+
+
+
+# -----------------------------------
+def ctlustyAg_more_wl(metallicity):
+    # input - metallicity of atmosphere
+    #         in multiples of solar metallicity
+    #         can range from 1 to 30 times
+    # output - returns a fuction for 
+    #          the geometric albedo as a 
+    #          function of wavelength in microns
+    metallicities = np.array([1.0,3.0,10.0,30.0])
+    filenames = ['AuxiliaryData/fort.19.jupiter.solar.tholin4d_7.0.05.power2.5.0.85mic',
+                 'AuxiliaryData/fort.19.jupiter.3solar.tholin4d_7.0.05.power2.5.0.85mic',
+                 'AuxiliaryData/fort.19.jupiter.10solar.tholin4d_7.0.05.power2.5.0.85mic',
+                 'AuxiliaryData/fort.19.jupiter.30solar.tholin4d_7.0.05.power2.5.0.85mic']
+    wls, ags = [],[]
+    for filename in filenames:
+        wl, ag = np.loadtxt(filename,unpack=True,usecols=(0,2),)
+        wls.append(wl)
+        ags.append(ag)
+    wls, ags = np.array(wls), np.array(ags)
+    # case that metallicity not in range:
+    if metallicity < metallicities[0] or metallicity > metallicities[3]:
+        print('metallicity outside interpolation range, make sure it is between 1.0 and 30.0')
+        return None
+    # case that metallicity exactly on the grid:
+    elif metallicity == metallicities[0] or metallicity == metallicities[1] or metallicity == metallicities[2]  or metallicity == metallicities[3] :
+        index = np.where(metallicity == metallicities)[0]
+        agcombo = ags[index].reshape(len(wls[0]))
+    else:
+        lb = np.max(np.where(metallicity > metallicities))
+        ub = np.min(np.where(metallicity < metallicities))
+        p1 = 1.0 - (metallicity - metallicities[lb])/(metallicities[ub]-metallicities[lb])
+        p2 = 1.0 - (metallicities[ub] - metallicity)/(metallicities[ub]-metallicities[lb])
+        agcombo = p1*ags[lb] + p2*ags[ub]
+    func = interp1d(wls[0],agcombo)
+    return func
+

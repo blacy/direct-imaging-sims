@@ -154,6 +154,7 @@ def planet_star_fluxratio_rayleigh(wavelength, params):
     ratio = params['Ag'](wavelength)*params['phi_func'](wavelength)*(params['rp']\
             *params['rjup']/(params['sep']*params['au_to_m']))**2.0
     return ratio
+
 def generate_noisey_data_rayleigh(TEXP, wavelengths, params):
     SNR = calc_snr(TEXP*60.0*60.0,wavelengths,params)
     noiseless_signal = planet_star_fluxratio_rayleigh(wavelengths,params)

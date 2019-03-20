@@ -2,7 +2,6 @@ import matplotlib.pyplot as plt
 from matplotlib import colors, ticker, cm
 import numpy as np
 from scipy.interpolate import interp1d, CubicSpline
-from orbit_class import Orbit
 
 def calc_wa(sep, alpha, d_obs):
     # sep should be in au
@@ -12,8 +11,6 @@ def calc_wa(sep, alpha, d_obs):
     sep = sep*au_to_m
     d_obs = d_obs*pc_to_m
     alpha = alpha*np.pi/180.0
-    # dplanet = np.sqrt(sep**2.0+d_obs**2.0-2.0*sep*d_obs*np.cos(wa))
-    # wa = np.arcsin(np.sin(alpha)*sep/dplanet)  
     wa = np.arcsin(np.sin(alpha)*sep/d_obs)  
     return wa 
 
@@ -168,7 +165,22 @@ def update_c_version(new_param_dict,old_param_dict,cperformance_table,tablesampl
           'area_sqarcsec':area_sqarcsec,'wl_d':wl_d,'mpixTable':mpixTable,'tau_occ':tau_occ,'tau_core':tau_core,}
     old_param_dict.update(coronagraph_dict)
 
+bandcenter, width = 0.506, 10.3
+wavelengths_in_band1 = create_wl_range(bandcenter*(1.0 - width/200.0), bandcenter*(1.0 + width/200.0), 50000)   
+bandcenter, width = 0.575, 10.1
+wavelengths_in_band2 = create_wl_range(bandcenter*(1.0 - width/200.0), bandcenter*(1.0 + width/200.0), 50000)  
+bandcenter, width = 0.661, 10.0
+wavelengths_in_band6 = create_wl_range(bandcenter*(1.0 - width/200.0), bandcenter*(1.0 + width/200.0), 50000)  
+bandcenter, width = 0.883, 5.2
+wavelengths_in_band8 = create_wl_range(bandcenter*(1.0 - width/200.0), bandcenter*(1.0 + width/200.0), 50000)  
+bandcenter, width = 0.721, 5.0
+wavelengths_in_band7 = create_wl_range(bandcenter*(1.0 - width/200.0), bandcenter*(1.0 + width/200.0), 50000)  
+bandcenter, width = 0.940, 6.4
+wavelengths_in_band9 = create_wl_range(bandcenter*(1.0 - width/200.0), bandcenter*(1.0 + width/200.0), 50000)  
+bandcenter, width = 0.760, 18.0
+wavelengths_in_ifsband = create_wl_range(bandcenter*(1.0 - width/200.0), bandcenter*(1.0 + width/200.0), 50000)
 
+    
 COLORMAP = cm.nipy_spectral
 CMAP2 = cm.nipy_spectral_r #cm.hot_r
 plt.rcParams['font.family'] = 'serif'
