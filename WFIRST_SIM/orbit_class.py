@@ -28,43 +28,108 @@ class Orbit:
 
         # pre-calculate a few things:
         self.per = self.a**1.5 /self.starmass # orbital period of planet around star in years
-
-
+        self.per_days = self.per*365.0
+        
     def ta_to_alpha(self, ta):
         # given a true anomaly in radians
         # compute the phase angle also in radians
-        cos_alpha = np.sin(ta + self.argperi)*np.sin(self.inc)*np.sin(self.ome) \
-                    - np.cos(self.ome)*np.cos(ta+self.argperi)
-        alpha = np.arccos(cos_alpha) # arccos maps to values 0 - pi
-        return alpha
+        # cos_arg = np.sin(ta + self.argperi)*np.sin(self.inc) 
+        # seem to need a shift of pi radians for this to behave as 
+        # expected...
+        cos_arg = np.sin(ta + self.argperi + np.pi)*np.sin(self.inc)
+        alpha = np.arccos(cos_arg) # arccos maps to values 0 - pi
+        return alpha 
 
     def ta_to_dt(self, ta):
         # given a true anomaly 
-        # compute the time since tp 
-        dt = (self.per/(2.*np.pi)) * \
-            (2.*np.arctan(np.sqrt((1.-self.ecc)/(1.+self.ecc))*np.tan(ta/2.)) \
-            - (self.ecc*np.sin(ta)*np.sqrt(1.-self.ecc**2.))/(1. + self.ecc*np.cos(ta)))
-        return dt
+        # compute the time since most
+        # recent periastron passage
+        E = 2.*np.arctan(np.sqrt((1.-self.ecc)/(1.+self.ecc))*np.tan(ta/2.))
+        dt = (self.per_days/(2.*np.pi))*( E - self.ecc*np.sin(E))
+        if dt < 0:
+            return dt + self.per_days
+        return dt 
 
+    def ta_to_sep(self,ta):
+        # given a true anomaly, compute the instantaneous
+        # separation in au
+        sep = self.a*(1.-self.ecc**2.)/(1.+self.ecc*np.cos(ta))    
+        return sep
+    
     def dt_ta_diff(self,ta,t):
         # function used in finding the 
         # true anomaly for a given time
         return t - self.ta_to_dt(ta)
 
-    def dt_to_ta(self, t):
-        # find ta such that: 0 = t - ta_to_t(ta)
-        ta =  brentq(self.dt_ta_diff,-np.pi,np.pi,args=(t))
-        return ta
+    def dt_to_ta(self, dt):
+        # find ta such that: 0 = t - ta_to_dt(ta)
+        # need to be careful with choosing
+        # initial bounds for the root finder
+        # so at this point
+        # this function isn't vectorized... can do that with masking
+        if dt < self.per_days:
+            if dt == 0.0:
+                return 0.0
+            else:
+                ta =  brentq(self.dt_ta_diff,0.0,np.pi*2.0,args=(dt))
+                return ta 
+        else:
+            dt = self.jd_to_t(dt)
+            if dt == 0.0:
+                return 0.0
+            else:
+                ta =  brentq(self.dt_ta_diff,0.0,np.pi*2.0,args=(dt))
+                return ta 
+                        
+    def jd_to_t(self,jd):
+        # convert from jd to time past last
+        # periastron passage 
+        return (jd-self.tp)%self.per_days     
+    
+    def jdlist_to_alpha(self,jdlist):   
+        # convert from a list of julian dates
+        # to the phase angles the planet
+        # will be at at those dates
+        t_list = self.jd_to_t(jdlist)
+        ta = [self.dt_to_ta(t) for t in t_list]
+        alpha = self.ta_to_alpha(np.array(ta))   
+        return alpha
 
+    def jdlist_to_sep(self,jdlist):
+        # get the instantaneous separation 
+        # between star and planet at a given
+        # julian date
+        t_list = self.jd_to_t(jdlist)
+        ta = [self.dt_to_ta(t) for t in t_list]
+        sep = self.ta_to_sep(np.array(ta))   
+        return sep
+
+    def jdlist_to_alpha_sep(self,jdlist):   
+        # convert from a list of julian dates
+        # to the phase angles the planet
+        # will be at on those dates
+        t_list = self.jd_to_t(jdlist)
+        ta = [self.dt_to_ta(t) for t in t_list]
+        alpha = self.ta_to_alpha(np.array(ta))   
+        sep = self.ta_to_sep(np.array(ta)) 
+        return alpha, sep
+    
     def ophase_to_dt(self, ophase): 
-        # convert from orbital phase to time (in julian days)
-        dt = ophase*self.per + self.tp
-        return dt
+        # convert from orbital phase to time past
+        # most recent periastron (in julian days)
+        dt = ophase*self.per_days 
+        return dt 
+    
+    def jd_to_ophase(self,jd):
+        # convert from jd to orbital phase
+        # as a fraction of the period
+        return ((jd-self.tp)%self.per_days) / self.per_days
 
-    def t_to_ophase(self, t):
-        # convert from a time (in julian days) to orbital phase
-        return (t-self.tp) / self.per
-
+    def dt_to_ophase(self, dt):
+        # convert from dt (a t less than a period past tp (in julian days) 
+        # to orbital phase)
+        return dt / self.per_days    
+    
     def ophase_to_sep(self, ophase):
         # convert from an orbital phase
         # to the instantaneous planet-star separation 
@@ -79,24 +144,11 @@ class Orbit:
         ta = self.dt_to_ta(self.ophase_to_dt(ophase))
         alpha = self.ta_to_alpha(ta)
         return alpha
-
-    def alpha_to_ta(self,alpha):
-        # convert from phase angle to true anomaly
-        # both in radians
-        # note that arcsin maps to values -pi/2 to pi/2
-        ta =  np.arcsin(np.cos(alpha)/np.sin(self.inc)) - self.argperi
-        return ta 
-
-    def alpha_to_ophase(self,alpha):
-        # convert from phase angle in radians
-        # to orbital phase (a fraction of the period)
-        ophase = self.t_to_ophase(self.ta_to_dt(self.alpha_to_ta(alpha)))
-        return ophase
-
-    def alpha_to_sep(self, alpha):
-        # given the phase angle in radians
-        # return the instantaneous planet-star separation
-        # in au
-        sep = self.ophase_to_sep(self.alpha_to_ophase(alpha))
-        return sep
-
+    
+    def ophase_to_wa(self,ophase):
+        pc_to_m = 30855152366503100.0  # convert parsecs to meters
+        au_to_m = 149590000000.0   # convert AU to meters 149590000000
+        alpha = self.ophase_to_alpha(ophase)
+        sep = self.ophase_to_sep(ophase)
+        wa = np.arcsin(np.sin(alpha)*sep*au_to_m/(self.dist*pc_to_m))
+        return wa 
