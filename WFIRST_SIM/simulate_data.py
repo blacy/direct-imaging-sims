@@ -1,6 +1,5 @@
 import matplotlib.pyplot as plt
 import numpy as np
-from orbit_class import Orbit
 import misc_utils as mu   
 import ifs_noise_model as snr
 import imaging_noise_model as snr_im
@@ -20,13 +19,14 @@ def generate_noisey_imaging(TEXP, bandcenter, width, params):
         noisy_signal = 0.0
     return bandcenter, noiseless_signal, noisy_signal, noise_level
 
-def change_alpha(orbit, params, newalpha, pfunc):
+def change_ophase(orbit, params, ophase, pfunc):
     # NEWALPHA MUST BE IN RADIANS
-    sep = orbit.alpha_to_sep(newalpha)
-    phi = pfunc(newalpha)
+    sep = orbit.ophase_to_sep(ophase)
+    alpha = orbit.ophase_to_alpha(ophase)
+    phi = pfunc(alpha)
+    wa = orbit.ophase_to_wa(ophase)
     params.update({'phi': phi})
     params.update({'sep':sep})
-    wa = mu.calc_wa(params['sep'],newalpha*180.0/np.pi,params['d_obs'])
     params.update({'wa':wa})
 
 def create_header_string(TEXP, params):
