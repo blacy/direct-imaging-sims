@@ -1,0 +1,8 @@
+# name, mass, radius, orbital_period, semi_major_axis, eccentricity,             inclination, omega, tperi, temp_calculated, temp_measured,             log_g, mag_v, star_distance, star_metallicity,             star_mass, star_radius, star_sp_type, star_age, star_teff,             star_detected_disc
+51 Eri b   , 2.600 , 1.110 , 1100.000 , 12.000 , 0.490 , 135.000 , 84.000 , 2452014.790 ,700.000 , nan , 3.500 , 5.223 , 29.400 , -0.027 , 1.750 , nan ,F0IV   , 0.020 , nan , IR Excess
+beta Pic b   , 12.900 , 1.650 , 10921.000 , 11.800 , 0.240 , 88.870 , 189.300 , 2456380.000 ,nan , nan , nan , 3.860 , 19.300 , nan , 1.730 , nan ,A6V   , 0.040 , nan , Imaging
+HD 206893 b   , 22.500 , nan , nan , 10.000 , nan , nan , nan , nan ,nan , 1400.000 , nan , 6.670 , 38.340 , nan , 1.240 , nan ,F5V   , 1.100 , 6486.000 , nan
+HD 984 b   , 48.000 , nan , nan , 18.000 , nan , nan , nan , nan ,nan , 2730.000 , nan , 7.300 , 47.100 , nan , 1.200 , nan ,F7V   , 0.080 , 6315.000 , nan
+HR 2562 b   , 26.000 , nan , nan , 20.300 , nan , nan , nan , nan ,nan , nan , nan , 6.114 , 33.630 , 0.015 , 1.300 , nan ,F5V   , 0.600 , nan , IR Excess
+HR 8799 d   , 8.300 , 1.200 , 41054.000 , 27.000 , 0.100 , 28.000 , 80.200 , nan ,nan , nan , nan , 5.960 , 39.400 , -0.470 , 1.560 , 1.500 ,A5V   , 0.060 , nan , Imaging
+HR 8799 e   , 9.200 , 1.170 , 18000.000 , 16.400 , 0.150 , 25.000 , nan , nan ,nan , 1150.000 , nan , 5.960 , 39.400 , -0.470 , 1.560 , 1.500 ,A5V   , 0.060 , nan , Imaging
