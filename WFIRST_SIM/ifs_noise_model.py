@@ -4,7 +4,6 @@ from scipy.interpolate import interp1d
 import misc_utils as mu
 from matplotlib import colors, ticker, cm
 from orbit_class import Orbit
-import juneper_model as pm
 # -----------------------------------------------------------------
 # Note that you must have 5 files in correct paths/formats/units for this
 # to work correctly

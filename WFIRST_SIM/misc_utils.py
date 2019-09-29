@@ -20,16 +20,16 @@ def lambert_phase(alpha, degrees=False):
     return (np.sin(alpha) + (np.pi - alpha)*np.cos(alpha))/np.pi
 
 def quantum_eff(wl):
-  if type(wl) == np.ndarray:
-    wlcopy = [wl[k] for k in range(len(wl))]
-    wlcopy = np.array([wlcopy]).reshape(len(wl))
-    for k in np.where(wlcopy<0.7)[0]:
-        wlcopy[k] = 0.7
-  elif wl < 0.7:
-      wlcopy = 0.7
-  else:
-      wlcopy = wl
-  return 0.9*(1.0-(wlcopy-0.7)/0.3)*0.9*0.98*0.865
+    if type(wl) == np.ndarray:
+        wlcopy = [wl[k] for k in range(len(wl))]
+        wlcopy = np.array([wlcopy]).reshape(len(wl))
+        for k in np.where(wlcopy<0.7)[0]:
+            wlcopy[k] = 0.7
+    elif wl < 0.7:
+        wlcopy = 0.7
+    else:
+        wlcopy = wl
+    return 0.9*(1.0-(wlcopy-0.7)/0.3)*0.9*0.98*0.865
   
 def old_quantum_efficiency(wavelength):
     #input wavelength unit: microns
