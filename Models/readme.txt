@@ -1,3 +1,26 @@
+Self-luminous Object Models:
+
+The columns are:
+ 1 - wavelength in microns
+ 2 - planet-star flux-ratio
+ 3 - geometric albedo, which should be ignored in this case
+
+This class of models uses the atmosphere and spectral code 
+CoolTLusty, which solves self-consistent atmospheres under 
+stellar irradiation, using a detailed suite of thermochemical 
+and opacity data, augmented to incorporate the ExoMol 
+methane opacities. The planet radius, effective temperatures,
+and surface gravity assumed in each case are listed in the 
+headers of individual files. Surface gravity is given as the log
+of cm/s^2. The metallicity for each model is incorporated in the 
+filename. More details can be found in Lacy & Burrows
+2019. Each file lists the spectral type of the object's host star. 
+The irradiation applied during calculations
+and in computing the planet-star flux-ratios were taken to be black
+bodies of appropriate temperature and with appropriate radii
+for that spectral type, rather than detailed stellar spectra. 
+
+---------------------------------------------------------------------
 Reflected Light Curve GUI: 
 
 This GUI allows the user to specify the orbital parameters, radius,
